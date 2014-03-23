@@ -1,0 +1,77 @@
+
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: t
+%%% End: 
+
+
+\documentclass{article}
+
+\usepackage[margin=1in]{geometry}
+\usepackage{tikz}
+\usepackage{float}
+
+
+
+\begin{document}
+\title{Summary: \\ \Large{Discriminative Multinomial Naive Bayes for Text Classification}}
+\author{David Rodriguez}
+\date{\today}
+\maketitle
+
+\section{Overview}
+
+Discriminative Multinomial Naive Bayes is a classification (DMNNB) algorithm that achieves effectiveness and efficiency by maximizing the likelihood $logP(\textbf{W},C)$ function. The probability $P(\textbf{W},C)$ captures the joint distribution of words and classes. In other words, knowing the joint probability distribution of words and classes one can classify any new combination of words (i.e. a document) into a given class by determining what classes achieves the largest probability given the combination of words. The DMNNB algorithm achieves it's accuracy by updating this joint distribution as the training data builds up the joint probabilities to be used to classify any new combination of words (again i.e. a document).
+
+If $F_{ic}$ represents the matrix corresponding to the joint probability distribution of words and classes $P(\textbf{W},C)$, then for each document $t_i$ in our training data set of size $i \in \{1,\dots,n\}$, the DMNNB algorithm iteratively updates the matrix $F_{ic}$ with each new $t_i$. That is,
+
+\begin{figure}[H]
+\begin{center}
+\begin{tikzpicture}[scale=1.5]
+%nodes
+\node at (-2,1) {$F^{0}_{ic}$};
+\node at (0,1) {$t_1$};
+\node at (0,0) {$\Phi(F^{0}_{ic},t_1)$};
+\node at (0,-1) {$F^{1}_{ic}$};
+\node at (2,-1) {$t_2$};
+\node at (2,-2) {$\Phi(F^{1}_{ic},t_2)$};
+\node at (2,-3) {$F^{2}_{ic}$};
+\node at (4.3,-3.7) {$and \ on$};
+%lines
+\draw [dashed, ->] (-2,.8) -- (-.2,.2);
+\draw [dashed, ->] (0,.8) -- (0,.2);
+\draw [dashed, ->] (0,-1.2) -- (1.8,-1.8);
+\draw [dashed, ->] (0,-.2) -- (0,-.8);
+\draw [dashed, ->] (2,-1.2) -- (2,-1.8);
+\draw [dashed, ->] (2,-2.2) -- (2,-2.8);
+\draw [dashed, ->] (2,-3.3) -- (4,-4);
+%steps
+%\node at (-4,0) {First update of $F^{0}_{ic}$};
+%\node at (-4,-2) {Second update of $F^{0}_{ic}$};
+\end{tikzpicture}
+\end{center}
+\caption{The DMNNB algorithm. Start with a word and class frequency matrix $F^0_{ic}$ and a document $t_1$. $\Phi$ is the step of recalculating the estimated and actual probabilities of word and class empirical distributions and returns an updated $F^1_{ic}$ matrix.}
+\end{figure}
+
+It is the updating of the frequency matrix which contrasts the DMNNB algorithm from other discriminative text classification algorithms that employ parameter learning methods, namely, the methods called Frequency Estimate and Stochastic Gradient Descent. As the authors point out, DMNNB is a perfect balance to these two approaches since it considers both likelihood information and prediction error. 
+
+Lastly, experiemental results cited in the paper compared DMNNB wihth a variety of models and algorithms, based on the accuracy of classifying new documents from the same training sets. The accuracy was tested using 10-fold stratified cross validation. For example, DMNNB compared to the a large scale logistic regression model (LR), tied in accuracy 89.47\% of the time on the nineteen data sets the two were compared against.But it is reported that DMNNB is more accurate on smaller data sets than LR. The conclusion derived by the authors, is the DMNNB is competitive with other text classification models and parameter learning methods, while clearly imporiving on Multinomial Naive Bayesian Classifiers, and in some instances giving better accuracy of classification if the data sets are small.
+
+\section{Opinion}   
+The DMNNB algorithm is an imporovement on the Multinomial Naive Bayes (MNNB) methods. This is because, as pointed out by the authors, while both DMNNB and MNNB methods try to maximize the objective function,
+\[
+logP(\textbf{W},C) = LL(T) = \sum_{t=1}^{|T|}log\widehat{P}(c^t|w^t) + \sum_{t=1}^{|T|}log\widehat{P}(w^t)
+\] 
+where $T = \{t_1,\dots,t_n\}$ and $c$ is a given class and $w$ a collection of words. Then $\widehat{P}(w^t)$ is said to estimate the how well the joint distribution is being estimated based on a document $t_i$. So if $\widehat{P}(w^t)$ is not updated with each new document, decreases in value with every new document, in effect increasing $LL(T)$ and giving a potential misclassification. MNNB does not update $\widehat{P}(w^t)$ while DMNNB does update $\widehat{P}(w^t)$.
+
+So while DMNNB provides an imporovement in classification accuracy compared to MNNB, DMNNB still has drawbacks. For example, DMNNB might not peform as well as LR models because there is a tendency to make \textit{stronger} modeling assumptions.\cite{stanford}. In a sense the DMNNB model in larger data sets may overfit the data compared to linear regression models. That is, the DMNNB algorithm may misclassify documents that are close to the decision boundary, on average, compared to linear regression models.
+
+
+
+\begin{thebibliography}{1}
+
+  \bibitem{stanford} Andrew Ng. {\em Generative Learning Algorithms}. Stanford, CS 229 Lecture Notes.
+
+\end{thebibliography} 
+\end{document}
